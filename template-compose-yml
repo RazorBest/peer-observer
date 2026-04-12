@@ -1,0 +1,27 @@
+services:
+  prometheus:
+    image: prom/prometheus:v3.5.1
+    volumes:
+      - ./tools/metrics/prometheus/:/etc/prometheus/
+      - prometheus_peer_observer_volume:/prometheus
+    command:
+      - "--storage.tsdb.retention.time=10d"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-lifecycle"
+      - "--web.enable-admin-api"
+    ports:
+      - 127.0.0.1:9092:9090
+
+  metrics:
+    build:
+      context: .
+      dockerfile: Dockerfile.metrics
+    depends_on:
+      - nats
+    networks:
+      default:
+        aliases:
+          - metrics-host # Used by prometheus in prometheus.yml.
+
+volumes:
+  prometheus_peer_observer_volume:
