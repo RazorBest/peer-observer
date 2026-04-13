@@ -1,12 +1,13 @@
 groups:
   - name: anomalies
     interval: 1m
+    # THRESHOLD_SPARSE = 5/60
     rules:
       - record: anomaly:adaptive:select
         expr: |-
           (
             {anomaly_name!="", anomaly_type="requests", anomaly_select="", anomaly_strategy=~"^$|adaptive"} > 0
-            unless avg_over_time({anomaly_name!="", anomaly_type="requests", anomaly_select="", anomaly_strategy=~"^$|adaptive"}[1h]) < on() group_left anomaly:adaptive:sparse_threshold
+            unless avg_over_time({anomaly_name!="", anomaly_type="requests", anomaly_select="", anomaly_strategy=~"^$|adaptive"}[1h]) < 5/60 
           )
           OR
           {anomaly_name!="", anomaly_type="latency", anomaly_select="", anomaly_strategy=~"^$|adaptive"} > 0
@@ -26,18 +27,18 @@ groups:
       # THRESHOLD_BY_COVAR = 0.5
       - record: anomaly:adaptive:stddev_1h:filtered
         expr: |-
-          stddev_over_time(anomaly:adaptive:select[1h]) > anomaly:adaptive:avg_1h * on() group_left 0.5
+          stddev_over_time(anomaly:adaptive:select[1h]) > anomaly:adaptive:avg_1h * 0.5
 
       - record: anomaly:adaptive:stddev_st
         expr: avg_over_time(anomaly:adaptive:stddev_1h:filtered[26h])
 
       # STDDEV_MULTIPLIER = 2
       - record: upper_band_st
-        expr: anomaly:adaptive:avg_1h + anomaly:adaptive:stddev_st * on() group_left 2
+        expr: anomaly:adaptive:avg_1h + anomaly:adaptive:stddev_st * 2
 
       # STDDEV_MULTIPLIER = 2
       - record: lower_band_st
-        expr: anomaly:adaptive:avg_1h - anomaly:adaptive:stddev_st * on() group_left 2
+        expr: anomaly:adaptive:avg_1h - anomaly:adaptive:stddev_st * 2
 
       - record: upper_band
         expr: |-
@@ -75,3 +76,15 @@ groups:
             ),
             0
           )
+
+  - name: AnomalyAdaptiveAlerts
+    rules:
+      - alert: AnomalyDetected
+        for: 5m
+        expr: >
+          last_over_time(anomaly:adaptive:select[2m]) < last_over_time(anomaly:lower_band{anomaly_strategy="adaptive"}[2m])
+          or
+          last_over_time(anomaly:adaptive:select[2m]) > last_over_time(anomaly:upper_band{anomaly_strategy="adaptive"}[2m])
+        labels:
+          severity: warning
+          anomaly_strategy: adaptive
