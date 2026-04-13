@@ -188,7 +188,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "peerobserver_conn_closed_increase_30m",
+          "expr": "peerobserver_conn_closed_increase_30m{host=\"$HOST\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -200,7 +200,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "upper_band{anomaly_name=\"peerobserver_conn_closed_increase_30m\"}",
+          "expr": "upper_band{host=\"$HOST\", anomaly_name=\"peerobserver_conn_closed_increase_30m\"}",
           "instant": false,
           "legendFormat": "{{}}",
           "range": true,
@@ -212,7 +212,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "lower_band{anomaly_name=\"peerobserver_conn_closed_increase_30m\"}",
+          "expr": "lower_band{host=\"$HOST\", anomaly_name=\"peerobserver_conn_closed_increase_30m\"}",
           "instant": false,
           "interval": "",
           "legendFormat": "lower_band",
@@ -225,7 +225,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_conn_closed_increase_30m\"}[2m])\r\n    < bool last_over_time(lower_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_conn_closed_increase_30m\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_conn_closed_increase_30m\"}[2m])\r\n    > bool last_over_time(upper_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_conn_closed_increase_30m\"}[2m])\r\n)\r\n> bool 0",
+          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_conn_closed_increase_30m\"}[2m])\r\n    < bool last_over_time(lower_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_conn_closed_increase_30m\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_conn_closed_increase_30m\"}[2m])\r\n    > bool last_over_time(upper_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_conn_closed_increase_30m\"}[2m])\r\n)\r\n> bool 0",
           "instant": false,
           "legendFormat": "alert",
           "range": true,
@@ -403,7 +403,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h",
+          "expr": "peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h{host=\"$HOST\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -415,7 +415,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "upper_band{anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}",
+          "expr": "upper_band{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -427,7 +427,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "lower_band{anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}",
+          "expr": "lower_band{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -439,7 +439,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}[2m])\r\n    < bool last_over_time(lower_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}[2m])\r\n    > bool last_over_time(upper_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}[2m])\r\n)\r\n> bool 0",
+          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}[2m])\r\n    < bool last_over_time(lower_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}[2m])\r\n    > bool last_over_time(upper_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_addrv2_addresses_sum_inbound_increase_1h\"}[2m])\r\n)\r\n> bool 0",
           "instant": false,
           "legendFormat": "alert",
           "range": true,
@@ -617,7 +617,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "peerobserver_p2p_addr_addresses_sum_inbound_increase_1h",
+          "expr": "peerobserver_p2p_addr_addresses_sum_inbound_increase_1h{host=\"$HOST\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -629,7 +629,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "upper_band{anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}",
+          "expr": "upper_band{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -641,7 +641,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "lower_band{anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}",
+          "expr": "lower_band{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -653,7 +653,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}[2m])\r\n    < bool last_over_time(lower_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}[2m])\r\n    > bool last_over_time(upper_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}[2m])\r\n)\r\n> bool 0",
+          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}[2m])\r\n    < bool last_over_time(lower_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}[2m])\r\n    > bool last_over_time(upper_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_addr_addresses_sum_inbound_increase_1h\"}[2m])\r\n)\r\n> bool 0",
           "instant": false,
           "legendFormat": "alert",
           "range": true,
@@ -831,7 +831,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "peerobserver_conn_inbound_current_anomaly",
+          "expr": "peerobserver_conn_inbound_current_anomaly{host=\"$HOST\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -843,7 +843,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "upper_band{anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}",
+          "expr": "upper_band{host=\"$HOST\", anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -855,7 +855,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "lower_band{anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}",
+          "expr": "lower_band{host=\"$HOST\", anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -867,7 +867,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}[2m])\r\n    < bool last_over_time(lower_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}[2m])\r\n    > bool last_over_time(upper_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}[2m])\r\n)\r\n> bool 0",
+          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}[2m])\r\n    < bool last_over_time(lower_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}[2m])\r\n    > bool last_over_time(upper_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_conn_inbound_current_anomaly\"}[2m])\r\n)\r\n> bool 0",
           "instant": false,
           "legendFormat": "alert",
           "range": true,
@@ -1045,7 +1045,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "peerobserver_rpc_peer_info_network_peers_iv4",
+          "expr": "peerobserver_rpc_peer_info_network_peers_iv4{host=\"$HOST\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1057,7 +1057,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "upper_band{anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}",
+          "expr": "upper_band{host=\"$HOST\", anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1069,7 +1069,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "lower_band{anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}",
+          "expr": "lower_band{host=\"$HOST\", anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1081,7 +1081,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}[2m])\r\n    < bool last_over_time(lower_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}[2m])\r\n    > bool last_over_time(upper_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}[2m])\r\n)\r\n> bool 0",
+          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}[2m])\r\n    < bool last_over_time(lower_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}[2m])\r\n    > bool last_over_time(upper_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_rpc_peer_info_network_peers_iv4\"}[2m])\r\n)\r\n> bool 0",
           "instant": false,
           "legendFormat": "alert",
           "range": true,
@@ -1259,7 +1259,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "peerobserver_p2p_share_linkinglion_total",
+          "expr": "peerobserver_p2p_share_linkinglion_total{host=\"$HOST\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1271,7 +1271,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "upper_band{anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}",
+          "expr": "upper_band{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1283,7 +1283,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "lower_band{anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}",
+          "expr": "lower_band{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1295,7 +1295,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}[2m])\r\n    < bool last_over_time(lower_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}[2m])\r\n    > bool last_over_time(upper_band{anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}[2m])\r\n)\r\n> bool 0",
+          "expr": "(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}[2m])\r\n    < bool last_over_time(lower_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}[2m])\r\n)\r\n+\r\n(\r\n    last_over_time(anomaly:adaptive:select{host=\"$HOST\", anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}[2m])\r\n    > bool last_over_time(upper_band{host=\"$HOST\", anomaly_strategy=\"adaptive\", anomaly_name=\"peerobserver_p2p_share_linkinglion_total\"}[2m])\r\n)\r\n> bool 0",
           "instant": false,
           "legendFormat": "alert",
           "range": true,
@@ -1310,7 +1310,25 @@
   "schemaVersion": 42,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "my_host",
+          "value": "my_host"
+        },
+        "description": "",
+        "name": "HOST",
+        "options": [
+          {
+            "selected": true,
+            "text": "my_host",
+            "value": "my_host"
+          }
+        ],
+        "query": "my_host",
+        "type": "textbox"
+      }
+    ]
   },
   "time": {
     "from": "now-24h",
@@ -1320,6 +1338,6 @@
   "timezone": "browser",
   "title": "Anomalies",
   "uid": "adhjlw5",
-  "version": 24,
+  "version": 31,
   "weekStart": ""
 }
