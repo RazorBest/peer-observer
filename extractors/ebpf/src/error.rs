@@ -16,6 +16,7 @@ pub enum RuntimeError {
     SystemTime(SystemTimeError),
     SetLogger(SetLoggerError),
     NatsConnection(NatsError<ConnectErrorKind>),
+    NoProcessWithPid(i32),
     NoPidFile((String, IoError)),
 }
 
@@ -37,6 +38,7 @@ impl fmt::Display for RuntimeError {
             RuntimeError::NoPidFile((path, e)) => {
                 write!(f, "could not read pid file \"{}\": {}", path, e)
             }
+            RuntimeError::NoProcessWithPid(e) => write!(f, "could not find process with PID {}", e),
         }
     }
 }
@@ -52,6 +54,7 @@ impl error::Error for RuntimeError {
             RuntimeError::NatsConnection(ref e) => Some(e),
             RuntimeError::NoSuchBPFMap(_) => None,
             RuntimeError::NoSuchBPFProg(_) => None,
+            RuntimeError::NoProcessWithPid(_) => None,
             RuntimeError::NoPidFile((_, ref e)) => Some(e),
         }
     }
