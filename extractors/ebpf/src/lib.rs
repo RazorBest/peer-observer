@@ -265,17 +265,12 @@ fn bitcoind_pid(args: &Args) -> Result<i32, RuntimeError> {
         .bitcoind_pid_file
         .clone()
         .expect("pid file path should be set");
-    log::info!(
-        "Reading bitcoind PID file '{}' specified via command line option",
-        path
-    );
 
     let file = File::open(&path).map_err(|e| RuntimeError::NoPidFile((path.clone(), e)))?;
     let mut reader = BufReader::new(file);
     let mut content = String::new();
     reader.read_to_string(&mut content)?;
     let pid: i32 = content.trim().parse()?;
-    log::info!("Using bitcoind PID={} read from {}", pid, path);
     Ok(pid)
 }
 
