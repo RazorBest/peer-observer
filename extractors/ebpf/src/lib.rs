@@ -313,7 +313,7 @@ fn bitcoind_pid(args: &Args) -> Result<i32, RuntimeError> {
 /// Returns true if the pid returned by the `bitcoin_pid` function
 /// comes from a bitcoin pid file.
 fn pid_comes_from_file(args: &Args) -> bool {
-    !args.bitcoind_pid.is_some() && args.bitcoind_pid_file.is_some()
+    args.bitcoind_pid.is_none() && args.bitcoind_pid_file.is_some()
 }
 
 /// Returns the pid of the bitcoind process, by deriving it from the args. It also checks
@@ -337,6 +337,7 @@ fn try_get_running_process_pid(args: &Args) -> Result<i32, RuntimeError> {
     }
 }
 
+#[allow(clippy::type_complexity)]
 fn init_bpf_listener<'a, 'b>(
     args: &Args,
     pid: i32,
