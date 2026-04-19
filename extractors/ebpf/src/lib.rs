@@ -249,6 +249,7 @@ pub fn find_map<'obj>(object: &'obj Object, name: &str) -> Result<Map<'obj>, Run
     }
 }
 
+/// Returns the bitcoind pid from the args or from the file supplied in the args
 fn bitcoind_pid(args: &Args) -> Result<i32, RuntimeError> {
     // The clap arg group "pid" takes care that one of bitcoind_pid or
     // bitcoind_pid_file is set
