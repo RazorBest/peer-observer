@@ -9,6 +9,7 @@ edition = "2021"
 shared = { path = "../../shared" }
 
 libbpf-rs = "0.26"
+usdt = { version = "0.6.0", optional = true }
 
 [build-dependencies]
 libbpf-cargo = "0.26"
@@ -16,3 +17,9 @@ libbpf-cargo = "0.26"
 [features]
 # Treat warnings as a build error.
 strict = []
+dev-bins = ["usdt"]
+
+[[bin]]
+name = "bitcoind_usdt_dummy"
+path = "test_bin/bitcoind_usdt_dummy.rs"
+required-features = ["dev-bins"]
