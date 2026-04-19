@@ -22,6 +22,7 @@ use shared::{async_nats, clap, nats_util, tokio};
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::mem::MaybeUninit;
+use std::path::Path;
 use std::time::Duration;
 use std::time::SystemTime;
 
@@ -224,6 +225,11 @@ impl Args {
     }
 }
 
+/// Queries procfs to see if the process with the given pid exists
+fn process_exists(pid: i32) -> bool {
+    Path::new(&format!("/proc/{}/stat", pid)).exists()
+}
+
 /// Find the BPF program with the given name
 pub fn find_prog_mut<'obj>(
     object: &'obj Object,
@@ -273,13 +279,40 @@ fn bitcoind_pid(args: &Args) -> Result<i32, RuntimeError> {
     Ok(pid)
 }
 
+/// Returns true if the pid returned by the `bitcoin_pid` function
+/// comes from a bitcoin pid file.
+fn pid_comes_from_file(args: &Args) -> bool {
+    args.bitcoind_pid.is_none() && args.bitcoind_pid_file.is_some()
+}
+
+/// Returns the pid of the bitcoind process, by deriving it from the args. It also checks
+/// that the process with that pid exists.
+fn try_get_running_process_pid(args: &Args) -> Result<i32, RuntimeError> {
+    let pid = bitcoind_pid(args)?;
+
+    if process_exists(pid) {
+        if pid_comes_from_file(args) {
+            log::info!(
+                "Using bitcoind PID={} read from {}",
+                pid,
+                args.bitcoind_pid_file.as_ref().unwrap()
+            );
+        } else {
+            log::info!("Using bitcoind PID={}", pid);
+        }
+        Ok(pid)
+    } else {
+        Err(RuntimeError::NoProcessWithPid(pid))
+    }
+}
+
 pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), RuntimeError> {
     if args.no_tracepoints_enabled() {
         log::error!("No tracepoints enabled.");
         return Ok(());
     }
 
-    let pid = bitcoind_pid(&args)?;
+    let pid = try_get_running_process_pid(&args)?;
 
     let mut skel_builder = tracing::TracingSkelBuilder::default();
     skel_builder.obj_builder.debug(args.libbpf_debug);
