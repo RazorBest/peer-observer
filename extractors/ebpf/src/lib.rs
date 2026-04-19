@@ -2,7 +2,7 @@
 
 use error::RuntimeError;
 use libbpf_rs::skel::{OpenSkel, Skel, SkelBuilder};
-use libbpf_rs::{Map, MapCore, Object, ProgramMut, RingBufferBuilder};
+use libbpf_rs::{Link, Map, MapCore, Object, ProgramMut, RingBufferBuilder, RingBuffer};
 use shared::clap::Parser;
 use shared::log::{self, error};
 use shared::nats_subjects::Subject;
@@ -301,28 +301,14 @@ fn try_get_running_process_pid(args: &Args) -> Result<i32, RuntimeError> {
     }
 }
 
-pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), RuntimeError> {
-    if args.no_tracepoints_enabled() {
-        log::error!("No tracepoints enabled.");
-        return Ok(());
-    }
-
-    let pid = try_get_running_process_pid(&args)?;
-
+fn init_bpf_listener<'a, 'b>(args: &Args, pid: i32, nc: &'a async_nats::Client, obj_container: &'b mut MaybeUninit<libbpf_rs::OpenObject>) -> Result<(i32, tracing::TracingSkel<'b>, RingBuffer<'a>, Vec<Link>), RuntimeError> {
     let mut skel_builder = tracing::TracingSkelBuilder::default();
     skel_builder.obj_builder.debug(args.libbpf_debug);
-
-    let mut uninit = MaybeUninit::uninit();
     log::info!("Opening BPF skeleton with debug={}..", args.libbpf_debug);
-    let open_skel: tracing::OpenTracingSkel = skel_builder.open(&mut uninit)?;
+    let open_skel: tracing::OpenTracingSkel = skel_builder.open(obj_container)?;
     log::info!("Loading BPF functions and maps into kernel..");
     let skel: tracing::TracingSkel = open_skel.load()?;
     let obj = skel.object();
-
-    let nc = nats_util::prepare_connection(&args.nats)?
-        .connect(&args.nats.address)
-        .await?;
-    log::info!("Connected to NATS server at {}", &args.nats.address);
 
     // Update the ebpf-extractor docs in the README.md when editing the active_tracepoints.
     let mut active_tracepoints = vec![];
@@ -337,10 +323,10 @@ pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), R
         active_tracepoints.extend(&TRACEPOINTS_NET_MESSAGE);
         #[rustfmt::skip]
         ringbuff_builder
-            .add(&map_net_msg_small,    |data| { handle_net_message(data, &nc) })?
-            .add(&map_net_msg_medium,   |data| { handle_net_message(data, &nc) })?
-            .add(&map_net_msg_large,    |data| { handle_net_message(data, &nc) })?
-            .add(&map_net_msg_huge,     |data| { handle_net_message(data, &nc) })?;
+            .add(&map_net_msg_small,    |data| { handle_net_message(data, nc) })?
+            .add(&map_net_msg_medium,   |data| { handle_net_message(data, nc) })?
+            .add(&map_net_msg_large,    |data| { handle_net_message(data, nc) })?
+            .add(&map_net_msg_huge,     |data| { handle_net_message(data, nc) })?;
     }
 
     // P2P connection tracepoints
@@ -353,11 +339,11 @@ pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), R
         active_tracepoints.extend(&TRACEPOINTS_NET_CONN);
         #[rustfmt::skip]
         ringbuff_builder
-            .add(&map_net_conn_inbound,         |data| { handle_net_conn_inbound(data, &nc) })?
-            .add(&map_net_conn_outbound,        |data| { handle_net_conn_outbound(data, &nc) })?
-            .add(&map_net_conn_closed,          |data| { handle_net_conn_closed(data, &nc) })?
-            .add(&map_net_conn_inbound_evicted, |data| { handle_net_conn_inbound_evicted(data, &nc) })?
-            .add(&map_net_conn_misbehaving,     |data| { handle_net_conn_misbehaving(data, &nc) })?;
+            .add(&map_net_conn_inbound,         |data| { handle_net_conn_inbound(data, nc) })?
+            .add(&map_net_conn_outbound,        |data| { handle_net_conn_outbound(data, nc) })?
+            .add(&map_net_conn_closed,          |data| { handle_net_conn_closed(data, nc) })?
+            .add(&map_net_conn_inbound_evicted, |data| { handle_net_conn_inbound_evicted(data, nc) })?
+            .add(&map_net_conn_misbehaving,     |data| { handle_net_conn_misbehaving(data, nc) })?;
     }
 
     // validation tracepoints
@@ -365,7 +351,7 @@ pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), R
     if !args.no_validation_tracepoints {
         active_tracepoints.extend(&TRACEPOINTS_VALIDATION);
         ringbuff_builder.add(&map_validation_block_connected, |data| {
-            handle_validation_block_connected(data, &nc)
+            handle_validation_block_connected(data, nc)
         })?;
     }
 
@@ -378,10 +364,10 @@ pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), R
         active_tracepoints.extend(&TRACEPOINTS_MEMPOOL);
         #[rustfmt::skip]
         ringbuff_builder
-            .add(&map_mempool_added,    |data| { handle_mempool_added(data, &nc) })?
-            .add(&map_mempool_removed,  |data| { handle_mempool_removed(data, &nc) })?
-            .add(&map_mempool_rejected, |data| { handle_mempool_rejected(data, &nc) })?
-            .add(&map_mempool_replaced, |data| { handle_mempool_replaced(data, &nc) })?;
+            .add(&map_mempool_added,    |data| { handle_mempool_added(data, nc) })?
+            .add(&map_mempool_removed,  |data| { handle_mempool_removed(data, nc) })?
+            .add(&map_mempool_rejected, |data| { handle_mempool_rejected(data, nc) })?
+            .add(&map_mempool_replaced, |data| { handle_mempool_replaced(data, nc) })?;
     }
 
     // addrman tracepoints
@@ -391,15 +377,15 @@ pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), R
         active_tracepoints.extend(&TRACEPOINTS_ADDRMAN);
         #[rustfmt::skip]
         ringbuff_builder
-            .add(&map_addrman_insert_new, |data| { handle_addrman_new(data, &nc) })?
-            .add(&map_addrman_insert_tried, |data| { handle_addrman_tried(data, &nc) })?;
+            .add(&map_addrman_insert_new, |data| { handle_addrman_new(data, nc) })?
+            .add(&map_addrman_insert_tried, |data| { handle_addrman_tried(data, nc) })?;
     }
 
     // attach tracepoints
-    let mut _links = Vec::new();
+    let mut links = Vec::new();
     for tracepoint in active_tracepoints {
         let prog = find_prog_mut(obj, tracepoint.function)?;
-        _links.push(prog.attach_usdt(
+        links.push(prog.attach_usdt(
             pid,
             &args.bitcoind_path,
             tracepoint.context,
@@ -420,6 +406,28 @@ pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), R
         "Startup successful. Starting to extract events from '{}'..",
         args.bitcoind_path
     );
+
+    Ok((pid, skel, ring_buffers, links))
+}
+
+pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), RuntimeError> {
+    if args.no_tracepoints_enabled() {
+        log::error!("No tracepoints enabled.");
+        return Ok(());
+    }
+
+    let pid = try_get_running_process_pid(&args)?;
+
+    let nc = nats_util::prepare_connection(&args.nats)?
+        .connect(&args.nats.address)
+        .await?;
+    log::info!("Connected to NATS server at {}", &args.nats.address);
+
+    let mut obj_container = MaybeUninit::uninit();
+    // Keeping _loaded_obj and _links alive is important. Dropping them triggers deleletion from the
+    // kernel space of the corresponding bpf maps.
+    let (_, mut _loaded_obj, ring_buffers, _links) = init_bpf_listener(&args, pid, &nc, &mut obj_container)?;
+
     let mut last_event_timestamp = SystemTime::now();
     let mut has_warned_about_no_events = false;
     loop {
