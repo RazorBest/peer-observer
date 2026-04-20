@@ -256,7 +256,7 @@ impl<T> DerefMut for LogDropCall<T> {
 
 impl<T> Drop for LogDropCall<T> {
     fn drop(&mut self) {
-        log::info!("Dropped {}", self.name);
+        log::debug!("Dropped {}", self.name);
     }
 }
 
@@ -532,10 +532,11 @@ pub async fn run(args: Args, shutdown_rx: watch::Receiver<bool>) -> Result<(), R
 
             match try_get_running_process_pid(&args) {
                 Ok(new_pid) => {
-                    // The order in which we drop matters. Doing it the other way can cause a
+                    // The order in which we drop matters. Doing it the other way might cause a
                     // use-after-free in libbpf.
                     drop(_links);
                     drop(_loaded_obj);
+                    drop(ring_buffers);
                     (pid, _loaded_obj, ring_buffers, _links) =
                         init_bpf_listener(&args, new_pid, &nc, &mut obj_container).unwrap();
                     last_event_timestamp = SystemTime::now();
