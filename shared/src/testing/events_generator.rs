@@ -1,8 +1,8 @@
-use crate::proptest::prelude::{any, Strategy, prop_compose};
-use crate::proptest::test_runner::TestRunner;
+use crate::proptest::prelude::{any, prop_compose, Strategy};
 use crate::proptest::strategy::ValueTree;
-use crate::protobuf::event::Event;
+use crate::proptest::test_runner::TestRunner;
 use crate::protobuf::event::event::PeerObserverEvent;
+use crate::protobuf::event::Event;
 
 prop_compose! {
     fn event_sample()(peer_observer_evt in any::<PeerObserverEvent>()) -> Event {
@@ -19,8 +19,7 @@ pub fn generate_proptest_samples<T: Sized>(
     count: usize,
 ) -> impl Iterator<Item = T> {
     let mut runner = TestRunner::default();
-    (0..count)
-        .map(move |_| strategy.new_tree(&mut runner).unwrap().current())
+    (0..count).map(move |_| strategy.new_tree(&mut runner).unwrap().current())
 }
 
 #[cfg(test)]
