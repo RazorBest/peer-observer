@@ -15,6 +15,9 @@ pub extern crate serde;
 pub extern crate simple_logger;
 pub extern crate tokio;
 
+pub extern crate proptest;
+pub extern crate proptest_derive;
+
 /// Mappings and implementation for the protobuf types used in NATS
 /// to communicate between the extractors and tools.
 pub mod protobuf;
