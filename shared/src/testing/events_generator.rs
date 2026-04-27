@@ -36,7 +36,6 @@ mod tests {
                 PeerObserverEvent::EbpfExtractor(e) => match e.ebpf_event.as_ref().unwrap() {
                     ebpf::EbpfEvent::Message(_) => "messages",
                     ebpf::EbpfEvent::Connection(_) => "connections",
-                    ebpf::EbpfEvent::Addrman(_) => "addrman",
                     ebpf::EbpfEvent::Mempool(_) => "mempool",
                     ebpf::EbpfEvent::Validation(_) => "validation",
                 },
