@@ -114,7 +114,7 @@ Assume the values are also increasing. Otherwise, adjust v[range] accordingly, a
 Let (v1', t1') and (vn', tn') be the extrapolated endpoints of v[range] (in practice, they are not too far away from (v1, t1) and (vn, tn)).
 ```
 
-If we take extrapolation into consideration, then the rate will be:
+If we take extrapolation into consideration, the rate will be:
 ```
 rate(v[range]) = (vn' - v1') / (tn' - t1')
 ```
@@ -129,3 +129,18 @@ Or an equivalent formula (based on the fact that the extrapolation is linear):
 factor = (tn' - t1') / (tn - t1)
 increase(v[range]) = (vn - v1) * factor
 ```
+
+## Building the intuition
+
+Even when you know the formula for `increase`, that's just one point. The real power of `increase` comes when it's sweeped across a range. I'll try to show you some examples and how to build an intuition about it.
+
+Cheat sheet:
+![Example 1 counter](img/counter1.png)
+![Example 1 increase](img/increase1.png)
+![Example 2 counter](img/counter2.png)
+![Example 2 increase](img/increase2.png)
+![Example 3 counter](img/counter3.png)
+![Example 3 increase](img/increase3.png)
+![Example 4 counter](img/counter4.png)
+![Example 5 counter](img/counter5.png)
+![Example 5 increase](img/increase5.png)
