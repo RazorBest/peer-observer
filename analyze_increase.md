@@ -135,12 +135,4 @@ increase(v[range]) = (vn - v1) * factor
 Even when you know the formula for `increase`, that's just one point. The real power of `increase` comes when it's sweeped across a range. I'll try to show you some examples and how to build an intuition about it.
 
 Cheat sheet:
-![Example 1 counter](img/counter1.png)
-![Example 1 increase](img/increase1.png)
-![Example 2 counter](img/counter2.png)
-![Example 2 increase](img/increase2.png)
-![Example 3 counter](img/counter3.png)
-![Example 3 increase](img/increase3.png)
-![Example 4 counter](img/counter4.png)
-![Example 5 counter](img/counter5.png)
-![Example 5 increase](img/increase5.png)
+![Increase cheat sheet](img/increase_cheat_sheet.png)
